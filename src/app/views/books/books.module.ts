@@ -1,6 +1,9 @@
 import { CommonModule } from '@angular/common'
 import { NgModule } from '@angular/core'
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule, Routes } from '@angular/router'
+
+import { MaterialModule } from '../../material/material.module'
 
 import { BooksService } from '../../services/books/books.service'
 
@@ -13,21 +16,21 @@ const ROUTES: Routes = [
     component: BooksComponent,
     pathMatch: 'full'
   },
+  // {
+  //   path: ':bookId',
+  //   component: BookPageComponent,
+  //   pathMatch: 'full'
+  // },
   {
-    path: '/:bookId',
-    component: BookPageComponent,
-    pathMatch: 'full'
-  },
-  {
-    path: '/add',
+    path: 'add',
     component: BookAddComponent,
     pathMatch: 'full'
   },
-  {
-    path: '/:bookId/edit',
-    component: BookEditComponent,
-    pathMatch: 'full'
-  }
+  // {
+  //   path: ':bookId/edit',
+  //   component: BookEditComponent,
+  //   pathMatch: 'full'
+  // }
 ]
 
 @NgModule({
@@ -40,7 +43,10 @@ const ROUTES: Routes = [
   ],
   imports: [
     CommonModule,
-    RouterModule.forChild(ROUTES)
+    RouterModule.forChild(ROUTES),
+    FormsModule,
+    ReactiveFormsModule,
+    MaterialModule
   ],
   providers: [BooksService]
 })

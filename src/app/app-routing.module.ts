@@ -1,7 +1,14 @@
 import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
 
-const routes: Routes = [
+import { HomeComponent } from './views/home/home.component'
+
+export const routes: Routes = [
+  {
+    path: '',
+    component: HomeComponent,
+    pathMatch: 'full'
+  },
   {
     path: 'books',
     loadChildren: './views/books/books.module#BooksModule'

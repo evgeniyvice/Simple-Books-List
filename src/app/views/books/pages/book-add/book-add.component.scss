@@ -1,0 +1,31 @@
+.AddBook {
+  text-align: center;
+
+  form {
+    width: 50%;
+    margin: auto;
+
+    .authors-form {
+      display: flex;
+      width: 100%;
+
+      .authors-input-block {
+        display: flex;
+        width: 100%;
+
+        .authors-input {
+          margin: 0 auto;
+          width: 45%
+        }
+      }
+      .authors-button {
+        margin: auto;
+      }
+    }
+
+    .example-full-width {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+  }
+}

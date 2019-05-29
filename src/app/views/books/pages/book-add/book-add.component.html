@@ -1,3 +1,57 @@
-<p>
-  book-add works!
-</p>
+<div class="AddBook view">
+    <form class="example-form" [formGroup]="bookForm">
+        <mat-form-field class="example-full-width">
+            <input matInput placeholder="Заголовок" formControlName="title">
+            <mat-error *ngIf="bookForm.get('title').hasError('required') && formTouched">
+                Поле обязательное для заполнения
+            </mat-error>
+        </mat-form-field>
+        <form class="authors-form" [formGroup]="authorForm">
+            <div class="authors-input-block">
+                <div class="authors-input">
+                    <mat-form-field class="example-full-width">
+                        <input matInput placeholder="Фамилия автора" formControlName="last_name">
+                        <mat-error *ngIf="authorForm.get('last_name').hasError('required')">
+                            Поле обязательное для заполнения
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="authors-input">
+                    <mat-form-field class="example-full-width">
+                        <input matInput placeholder="Имя автора" formControlName="first_name">
+                        <mat-error *ngIf="authorForm.get('first_name').hasError('required')">
+                            Поле обязательное для заполнения
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="authors-button">
+                <button mat-raised-button color="primary" (click)="addAuthor()">Добавить автора</button>
+            </div>
+        </form>
+        <ng-container *ngIf="authors.length">
+            <mat-list role="list" *ngFor="let author of authors; let idx = index">
+                <mat-list-item role="listitem">
+                    <span>{{author.first_name}} {{author.last_name}}
+                        <button mat-icon-button (click)="deleteAuthor(idx)">
+                            <i class="material-icons">
+                                delete
+                            </i>
+                        </button>
+                    </span>
+                </mat-list-item>
+            </mat-list>
+        </ng-container>
+        <mat-form-field class="example-full-width">
+            <input matInput placeholder="ISBN" formControlName="isbn">
+            <mat-error *ngIf="bookForm.get('isbn').hasError('required') && formTouched">
+                Поле обязательное для заполнения
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field class="example-full-width">
+            <input matInput type="date" placeholder="Год издания" formControlName="publish_year">
+        </mat-form-field>
+        <button [disabled]="bookForm.invalid || authorForm.invalid" mat-raised-button color="primary"
+            (click)="addBook()">Добавить книгу</button>
+    </form>
+</div>
