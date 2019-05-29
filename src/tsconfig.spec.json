@@ -1,8 +1,9 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "../tsconfig.app.json",
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
     "types": [
+      "bluebird-global",
       "jasmine",
       "node"
     ]
