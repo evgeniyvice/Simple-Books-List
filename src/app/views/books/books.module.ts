@@ -7,8 +7,8 @@ import { MaterialModule } from '../../material/material.module'
 
 import { BooksService } from '../../services/books/books.service'
 
-import { BookCardComponent } from './components/index'
-import { BookAddComponent, BookEditComponent, BookPageComponent, BooksComponent } from './pages/index'
+import { MessageDialogComponent } from '../../dialogs/index'
+import { BookAddComponent, BooksComponent } from './pages/index'
 
 const ROUTES: Routes = [
   {
@@ -16,30 +16,23 @@ const ROUTES: Routes = [
     component: BooksComponent,
     pathMatch: 'full'
   },
-  // {
-  //   path: ':bookId',
-  //   component: BookPageComponent,
-  //   pathMatch: 'full'
-  // },
   {
     path: 'add',
     component: BookAddComponent,
     pathMatch: 'full'
   },
-  // {
-  //   path: ':bookId/edit',
-  //   component: BookEditComponent,
-  //   pathMatch: 'full'
-  // }
+  {
+    path: ':bookId/edit',
+    component: BookAddComponent,
+    pathMatch: 'full'
+  }
 ]
 
 @NgModule({
   declarations: [
-    BookPageComponent,
     BookAddComponent,
-    BookEditComponent,
     BooksComponent,
-    BookCardComponent
+    MessageDialogComponent
   ],
   imports: [
     CommonModule,
@@ -48,6 +41,7 @@ const ROUTES: Routes = [
     ReactiveFormsModule,
     MaterialModule
   ],
-  providers: [BooksService]
+  providers: [BooksService],
+  entryComponents: [MessageDialogComponent]
 })
 export class BooksModule { }

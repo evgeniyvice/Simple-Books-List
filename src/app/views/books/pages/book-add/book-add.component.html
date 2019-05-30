@@ -1,9 +1,11 @@
 <div class="AddBook view">
-    <form class="example-form" [formGroup]="bookForm">
+    <form class="example-form" #form="ngForm">
         <mat-form-field class="example-full-width">
-            <input matInput placeholder="Заголовок" formControlName="title">
-            <mat-error *ngIf="bookForm.get('title').hasError('required') && formTouched">
-                Поле обязательное для заполнения
+            <input matInput placeholder="Заголовок" name="title" required maxlength="30" [(ngModel)]="book.title">
+            <mat-error *ngIf="form.controls.title && formTouched">
+                <ng-container *ngIf="form.controls.title.errors?.required">
+                    Поле обязательное для заполнения
+                </ng-container>
             </mat-error>
         </mat-form-field>
         <form class="authors-form" [formGroup]="authorForm">
@@ -26,11 +28,12 @@
                 </div>
             </div>
             <div class="authors-button">
-                <button mat-raised-button color="primary" (click)="addAuthor()">Добавить автора</button>
+                <button mat-raised-button color="primary" [disabled]="authorForm.invalid" (click)="addAuthor()">Добавить
+                    автора</button>
             </div>
         </form>
-        <ng-container *ngIf="authors.length">
-            <mat-list role="list" *ngFor="let author of authors; let idx = index">
+        <ng-container *ngIf="book.authors.length">
+            <mat-list role="list" *ngFor="let author of book.authors; let idx = index">
                 <mat-list-item role="listitem">
                     <span>{{author.first_name}} {{author.last_name}}
                         <button mat-icon-button (click)="deleteAuthor(idx)">
@@ -43,15 +46,32 @@
             </mat-list>
         </ng-container>
         <mat-form-field class="example-full-width">
-            <input matInput placeholder="ISBN" formControlName="isbn">
-            <mat-error *ngIf="bookForm.get('isbn').hasError('required') && formTouched">
-                Поле обязательное для заполнения
+            <input matInput placeholder="ISBN" name="isbn" required [(ngModel)]="book.isbn"
+                pattern="^(?:ISBN(?:-1[03])?:?)?(?=[0-9X]{10}$|(?=(?:[0-9]+[-]){3})[-0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[-]){4})[-0-9]{17}$)(?:97[89][-]?)?[0-9]{1,5}[-]?[0-9]+[-]?[0-9]+[-]?[0-9X]">
+            <mat-error *ngIf="form.controls.isbn && formTouched">
+                <ng-container *ngIf="form.controls.isbn.errors?.required">
+                    Поле обязательное для заполнения
+                </ng-container>
+                <ng-container *ngIf="form.controls.isbn.errors?.pattern">
+                    Неверный ISBN
+                </ng-container>
             </mat-error>
         </mat-form-field>
         <mat-form-field class="example-full-width">
-            <input matInput type="date" placeholder="Год издания" formControlName="publish_year">
+            <input matInput [min]="minDate" [matDatepicker]="picker" placeholder="Дата публикации" name="publish_year"
+                [(ngModel)]="book.publish_year">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <!-- <input matInput type="date" placeholder="Год издания" name="publish_year" [(ngModel)]="book.publish_year"> -->
         </mat-form-field>
-        <button [disabled]="bookForm.invalid || authorForm.invalid" mat-raised-button color="primary"
-            (click)="addBook()">Добавить книгу</button>
+        <div class="buttons">
+            <ng-container *ngIf="buttonType === 'add'">
+                <button mat-raised-button color="primary" (click)="addBook(form)">Добавить книгу</button>
+            </ng-container>
+            <ng-container *ngIf="buttonType === 'edit'">
+                <a mat-raised-button color="basic" [routerLink]="['/books']">Отмена</a>
+                <button mat-raised-button color="primary" (click)="editBook(form)">Редактировать книгу</button>
+            </ng-container>
+        </div>
     </form>
 </div>

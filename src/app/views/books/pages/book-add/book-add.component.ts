@@ -1,58 +1,99 @@
-import { Component } from '@angular/core'
-import { FormControl, FormGroup, Validators } from '@angular/forms'
+import { Component, OnDestroy } from '@angular/core'
+import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms'
+import { MatDialog } from '@angular/material/dialog'
+import { ActivatedRoute, Params } from '@angular/router'
+import { Subscription } from 'rxjs/internal/Subscription'
+import { MessageDialogComponent } from '../../../../dialogs/index'
 import { BooksService } from '../../../../services/books/books.service'
-import { Author } from '../../../../services/books/declarations/index'
+import { Book } from '../../../../services/books/declarations/index'
 
 // tslint:disable-next-line: no-var-requires
 const uuid = require('uuid')
+
+type ButtonType = 'add' | 'edit'
 
 @Component({
   selector: 'app-book-add',
   templateUrl: './book-add.component.html',
   styleUrls: ['./book-add.component.scss']
 })
-export class BookAddComponent {
-
-  public bookForm = new FormGroup({
-    title: new FormControl('', [Validators.required, Validators.maxLength(30)]),
-    isbn: new FormControl('', [
-      Validators.required,
-      Validators.pattern(/(?:ISBN(?:-1[03])?:?)?(?=[0-9X]{10}$|(?=(?:[0-9]+[-]){3})[-0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[-]){4})[-0-9]{17}$)(?:97[89][-]?)?[0-9]{1,5}[-]?[0-9]+[-]?[0-9]+[-]?[0-9X]/)
-    ]),
-    publish_year: new FormControl(null)
-  })
+export class BookAddComponent implements OnDestroy {
   public authorForm = new FormGroup({
-    first_name: new FormControl('', [Validators.required]),
-    last_name: new FormControl('', [Validators.required]),
+    first_name: new FormControl('', [Validators.required, Validators.maxLength(20)]),
+    last_name: new FormControl('', [Validators.required, Validators.maxLength(20)]),
   })
+
+  public minDate = new Date(1980, 1, 1)
+  public book: Book = {
+    id: uuid(),
+    title: '',
+    authors: [],
+    isbn: '',
+    publish_year: null
+  }
   public formTouched = false
 
-  public authors: Array<Author> = []
+  public buttonType: ButtonType = 'add'
+
+  private routeSub: Subscription
+
   constructor(
-    private booksService: BooksService
-  ) { }
+    private route: ActivatedRoute,
+    private booksService: BooksService,
+    private dialog: MatDialog
+  ) {
+    this.routeSub = this.route.params.subscribe(async ({ bookId }: Params) => {
+      if (bookId) {
+        this.book = await this.booksService.getBookById(bookId)
+        this.buttonType = 'edit'
+      }
+    })
+  }
+
+  public ngOnDestroy(): void {
+    if (this.routeSub) {
+      this.routeSub.unsubscribe()
+    }
+  }
 
   public addAuthor(): void {
     if (this.authorForm.invalid) { return }
-    this.authors.push(this.authorForm.value)
+    this.book.authors.push(this.authorForm.value)
+    this.authorForm.reset()
   }
 
   public deleteAuthor(id: number): void {
-    this.authors.splice(id, 1)
+    this.book.authors.splice(id, 1)
   }
 
-  public addBook(): void {
+  public openDialog(message: string): void {
+    const dialogRef = this.dialog.open(MessageDialogComponent)
+    dialogRef.componentInstance.message = message
+  }
+
+  public addBook(form: NgForm): void {
     this.formTouched = true
+    if (form.invalid) { return }
     try {
-      this.booksService.addBook({
-        id: uuid(),
-        title: this.bookForm.value['title'],
-        authors: this.authors,
-        isbn: this.bookForm.value['isbn'],
-        publish_year: this.bookForm.value['publish_year']
-      })
+      this.booksService.addBook(this.book)
     } catch (err) {
-      console.log(err)
+      console.warn(err)
+      this.openDialog('Упс! Что-то пошло не так, попробуйте снова')
+    } finally {
+      this.openDialog('Книга добавлена!')
+    }
+  }
+
+  public editBook(form: NgForm): void {
+    this.formTouched = true
+    if (form.invalid) { return }
+    try {
+      this.booksService.editBook(this.book)
+    } catch (err) {
+      console.warn(err)
+      this.openDialog('Упс! Что-то пошло не так, попробуйте снова')
+    } finally {
+      this.openDialog('Книга отредактирована!')
     }
   }
 

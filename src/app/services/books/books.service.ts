@@ -10,6 +10,11 @@ export class BooksService {
     private localStorage: LocalStorage
   ) { }
 
+  public async getBookById(id: string): Promise<Book> {
+    const books = await this.getBooks()
+    return books.find(book => book.id === id)
+  }
+
   public async addBook(book: Book): Promise {
     const books = await this.getBooks()
     books.push(book)
@@ -18,18 +23,19 @@ export class BooksService {
 
   public async deleteBook(id: string): Promise {
     const books = await this.getBooks()
-    books.filter(book => book.id !== id)
-    this.localStorage.setItem('books', books).toPromise()
+    const newbooks = books.filter(book => book.id !== id)
+    this.localStorage.setItem('books', newbooks).toPromise()
   }
 
   public async editBook(book: Book): Promise {
     const books = await this.getBooks()
-    books.map(item => {
+    const newbooks = books.map(item => {
       if (item.id === book.id) {
         item = book
       }
+      return item
     })
-    this.localStorage.setItem('books', books).toPromise()
+    this.localStorage.setItem('books', newbooks).toPromise()
   }
 
   public async getBooks(): Promise<Book[]> {

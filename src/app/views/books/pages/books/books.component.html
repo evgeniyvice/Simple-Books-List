@@ -1,27 +1,59 @@
 <div class="Books view" *ngIf="books">
-    <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+    <mat-form-field>
+        <mat-label>Выбери сортировку</mat-label>
+        <mat-select [(value)]="sortType" (selectionChange)="changeSortType()">
+            <mat-option value="publish_asc">По дате публикации от новых к старым</mat-option>
+            <mat-option value="publish_desc">По дате публикации от старых к новым</mat-option>
+            <mat-option value="title_asc">По названию А-Я</mat-option>
+            <mat-option value="title_desc">По названию Я-А</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-table [dataSource]="books" class="mat-elevation-z8">
         <!-- Position Column -->
         <ng-container matColumnDef="title">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Название книги </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef> Название книги </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.title}} </mat-cell>
         </ng-container>
 
         <!-- Name Column -->
         <ng-container matColumnDef="authors">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Авторы </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.authors}} </mat-cell>
+            <mat-header-cell *matHeaderCellDef> Авторы </mat-header-cell>
+            <mat-cell class="authors" *matCellDef="let element">
+                <mat-list role="list" *ngFor="let author of element.authors">
+                    <mat-list-item role="listitem">
+                        <span>{{author.first_name}} {{author.last_name}}
+                        </span>
+                    </mat-list-item>
+                </mat-list>
+            </mat-cell>
         </ng-container>
 
         <!-- Weight Column -->
         <ng-container matColumnDef="isbn">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> ISBN </mat-header-cell>
+            <mat-header-cell *matHeaderCellDef> ISBN </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.isbn}} </mat-cell>
         </ng-container>
 
         <!-- Symbol Column -->
         <ng-container matColumnDef="publish_year">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> Дата публикации </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.publish_year}} </mat-cell>
+            <mat-header-cell *matHeaderCellDef> Дата публикации </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.publish_year | date}} </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="delete">
+            <mat-header-cell *matHeaderCellDef></mat-header-cell>
+            <mat-cell *matCellDef="let element">
+                <a mat-icon-button [routerLink]="element.id + '/edit'">
+                    <i class="material-icons">
+                        edit
+                    </i>
+                </a>
+                <button mat-icon-button (click)="deleteBook(element.id)">
+                    <i class="material-icons">
+                        delete
+                    </i>
+                </button>
+            </mat-cell>
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
