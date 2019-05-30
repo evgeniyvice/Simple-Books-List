@@ -1,3 +1,30 @@
-<p>
-  books works!
-</p>
+<div class="Books view" *ngIf="books">
+    <mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+        <!-- Position Column -->
+        <ng-container matColumnDef="title">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Название книги </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.title}} </mat-cell>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="authors">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Авторы </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.authors}} </mat-cell>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="isbn">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> ISBN </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.isbn}} </mat-cell>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="publish_year">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Дата публикации </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.publish_year}} </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    </mat-table>
+</div>
