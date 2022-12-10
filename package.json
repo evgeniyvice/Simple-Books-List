@@ -31,7 +31,7 @@
     "@types/form-data": "^2.2.1",
     "bluebird": "^3.5.5",
     "core-js": "^2.5.4",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "hammerjs": "^2.0.8",
     "keyboardevent-key-polyfill": "^1.1.0",
     "path": "^0.12.7",
